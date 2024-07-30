@@ -1,6 +1,7 @@
-package org.example;
+package org.example.crawler;
 
 import lombok.AllArgsConstructor;
+import org.example.WikiClient;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -8,24 +9,12 @@ import java.util.concurrent.TimeoutException;
 
 import static java.lang.String.join;
 
-
 public class SingleThreadCrawler {
+    private final Queue<Node> searchQueue = new LinkedList<>();
 
-    public static void main(String[] args) throws Exception {
-        SingleThreadCrawler crawler = new SingleThreadCrawler();
+    private final Set<String> visited = new HashSet<>();
 
-        long startTime = System.nanoTime();
-        String result = crawler.find("Java_(programming_language)", "Cat", 5, TimeUnit.MINUTES);
-        long finishTime = TimeUnit.SECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
-
-        System.out.println("Took "+finishTime+" seconds, result is: " + result);
-    }
-
-    private Queue<Node> searchQueue = new LinkedList<>();
-
-    private Set<String> visited = new HashSet<>();
-
-    private WikiClient client = new WikiClient();
+    private final WikiClient client = new WikiClient();
 
     public String find(String from, String target, long timeout, TimeUnit timeUnit) throws Exception {
         long deadline = System.nanoTime() + timeUnit.toNanos(timeout);
